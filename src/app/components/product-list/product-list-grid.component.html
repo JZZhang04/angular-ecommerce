@@ -1,0 +1,69 @@
+<div class="main-content">
+   <div class="section-content section-content-p30">
+
+      <h4>{{ currentCategoryName }}</h4>
+      <hr>
+
+      <div class="container-fluid">
+         <div class="row">
+
+            <!-- loop over the collection of products -->
+            <div *ngFor="let tempProduct of products" class="col-md-3">
+
+               <div class="product-box">
+
+                  <a routerLink="/products/{{ tempProduct.id }}">
+                     <img src="{{ tempProduct.imageUrl }}" class="img-responsive product-image">
+                  </a>
+
+                  <a routerLink="/products/{{ tempProduct.id }}">
+                     <h1>{{ tempProduct.name }}</h1>
+                  </a>
+
+                  <div class="price">{{ tempProduct.unitPrice | currency:'USD' }}</div>
+                  <button (click)="addToCart(tempProduct)" class="primary-btn">Add to cart</button>
+               </div>
+
+            </div>
+
+            <!-- if products empty, display a massage-->
+            <div *ngIf="products?.length == 0" class="alert alert-warning col-md-12" role="alert">
+               No products found.
+            </div>
+
+         </div>
+
+         <!--begin footer-->
+         <div class="footer-pagination">
+            <div class="row justify-content-center">
+               <div class="col-md-2 text-center">
+                  <!-- Pagination -->
+                  <ngb-pagination 
+                  [(page)]="thePageNumber" 
+                  [pageSize]="thePageSize" 
+                  [collectionSize]="theTotalElements"
+                     [maxSize]="5" 
+                     [boundaryLinks]="true" 
+                     (pageChange)="listProducts()"
+                     class="custom-pagination">
+                  </ngb-pagination>
+               </div>
+               <div class="col-md-2 text-center mt-2">
+                  <!-- Page Size Dropdown -->
+                  <span class="mr-1">Page Size </span>
+                  <select #myPageSelect (change)="updatePageSize(myPageSelect.value)">
+                     <option>1</option>
+                     <option>2</option>
+                     <option>4</option>
+                     <option selected="true">8</option>
+                     <option>16</option>
+                  </select>
+               </div>
+            </div>
+         </div>
+         <!--end footer-->
+            
+
+      </div>
+   </div>
+</div>
