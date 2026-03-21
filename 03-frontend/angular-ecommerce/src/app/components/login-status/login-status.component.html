@@ -1,0 +1,8 @@
+<div class="form-header">
+  <button *ngIf="!isAuthenticated" (click)="login()" class="au-btn-submit">
+    Log In
+  </button>
+  <button *ngIf="isAuthenticated" (click)="logout()" class="au-btn-submit">
+    Log Out
+  </button>
+</div>

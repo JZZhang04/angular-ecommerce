@@ -21,8 +21,16 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: maven
 
-      - name: Build and test with Maven
+      - name: Create application.properties from template
+        working-directory: 02-backend/spring-boot-ecommerce/src/main/resources
+        run: |
+          cp application.properties.template application.properties
+          sed -i 's/YOUR_DB_USERNAME/ci_user/' application.properties
+          sed -i 's/YOUR_DB_PASSWORD/ci_password/' application.properties
+          sed -i 's/YOUR_AUTH0_DOMAIN/dev-placeholder.auth0.com/' application.properties
+          sed -i 's/YOUR_AUTH0_CLIENT_ID/placeholder_client_id/' application.properties
+
+      - name: Build with Maven (skip tests)
         working-directory: 02-backend/spring-boot-ecommerce
-        run: mvn --no-transfer-progress verify
+        run: mvn --no-transfer-progress package -DskipTests

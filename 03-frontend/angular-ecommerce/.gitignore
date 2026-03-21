@@ -10,7 +10,6 @@
 /node_modules
 npm-debug.log
 yarn-error.log
-# package-lock.json should be committed for reproducible CI builds
 
 # IDEs and editors
 .idea/
@@ -41,15 +40,3 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
-
-# macOS
-*.iml
-
-# Backend - sensitive config
-02-backend/spring-boot-ecommerce/src/main/resources/application.properties
-
-# Frontend - sensitive config
-03-frontend/angular-ecommerce/src/app/config/my-app-config.ts
-
-# Maven
-02-backend/spring-boot-ecommerce/target/

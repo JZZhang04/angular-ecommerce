@@ -1,0 +1,11 @@
+.account-wrap {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.welcome-message {
+  font-size: 12px;
+  color: #fff;
+  opacity: 0.85;
+  padding-right: 8px;
+}

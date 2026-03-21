@@ -1,0 +1,38 @@
+<!-- Chat bubble button -->
+<button class="chat-bubble" (click)="toggle()" title="AI Shopping Assistant">
+  <span *ngIf="!isOpen">💬</span>
+  <span *ngIf="isOpen">✕</span>
+</button>
+
+<!-- Chat panel -->
+<div class="chat-panel" *ngIf="isOpen">
+  <div class="chat-header">
+    <span>🛍️ Shopping Assistant</span>
+  </div>
+
+  <div class="chat-messages" #messageContainer>
+    <div *ngIf="messages.length === 0" class="chat-welcome">
+      Hi! I'm your AI shopping assistant. Ask me anything about our products!
+    </div>
+    <div
+      *ngFor="let msg of messages"
+      class="chat-message"
+      [class.user]="msg.role === 'user'"
+      [class.assistant]="msg.role === 'assistant'">
+      {{ msg.content }}
+    </div>
+    <div *ngIf="isLoading" class="chat-message assistant loading">
+      <span>...</span>
+    </div>
+  </div>
+
+  <div class="chat-input-area">
+    <textarea
+      [(ngModel)]="userInput"
+      (keydown)="onKeyDown($event)"
+      placeholder="Ask about products..."
+      rows="2">
+    </textarea>
+    <button (click)="sendMessage()" [disabled]="isLoading">Send</button>
+  </div>
+</div>

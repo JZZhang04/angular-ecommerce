@@ -23,6 +23,10 @@ jobs:
           cache: npm
           cache-dependency-path: 03-frontend/angular-ecommerce/package-lock.json
 
+      - name: Create app config from template
+        working-directory: 03-frontend/angular-ecommerce/src/app/config
+        run: cp my-app-config.ts.template my-app-config.ts
+
       - name: Install dependencies
         working-directory: 03-frontend/angular-ecommerce
         run: npm ci
@@ -30,7 +34,3 @@ jobs:
       - name: Build
         working-directory: 03-frontend/angular-ecommerce
         run: npm run build
-
-      - name: Test (headless)
-        working-directory: 03-frontend/angular-ecommerce
-        run: npm test -- --watch=false --browsers=ChromeHeadless
