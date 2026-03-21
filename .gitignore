@@ -1,0 +1,20 @@
+# macOS
+.DS_Store
+
+# Backend - sensitive config
+02-backend/spring-boot-ecommerce/src/main/resources/application.properties
+
+# Frontend - sensitive config
+03-frontend/angular-ecommerce/src/app/config/my-app-config.ts
+
+# Node
+node_modules/
+package-lock.json
+
+# Maven
+02-backend/spring-boot-ecommerce/target/
+
+# IDE
+.idea/
+*.iml
+.vscode/
