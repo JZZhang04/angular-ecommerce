@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { environment } from 'src/environments/environment';
 
 interface ChatMessage {
   role: 'user' | 'assistant';
@@ -16,8 +17,14 @@ export class ChatWidgetComponent {
   userInput = '';
   messages: ChatMessage[] = [];
   isLoading = false;
+  private chatUrl = `${environment.apiBaseUrl}/chat`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    const saved = sessionStorage.getItem('chatMessages');
+    if (saved) {
+      this.messages = JSON.parse(saved);
+    }
+  }
 
   toggle() {
     this.isOpen = !this.isOpen;
@@ -31,11 +38,12 @@ export class ChatWidgetComponent {
     this.userInput = '';
     this.isLoading = true;
 
-    this.http.post<{ message: string }>('http://localhost:8080/api/chat', {
+    this.http.post<{ message: string }>(this.chatUrl, {
       messages: this.messages
     }).subscribe({
       next: (res) => {
         this.messages.push({ role: 'assistant', content: res.message });
+        sessionStorage.setItem('chatMessages', JSON.stringify(this.messages));
         this.isLoading = false;
       },
       error: () => {

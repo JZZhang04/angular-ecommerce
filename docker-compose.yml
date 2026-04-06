@@ -1,0 +1,46 @@
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: ecommerce-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-full-stack-ecommerce}
+      MYSQL_USER: ${MYSQL_USER:-ecommerceapp}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-ecommerceapp}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./01-starter-files/db-scripts/refresh-database-with-100-products.sql:/docker-entrypoint-initdb.d/01-refresh-database-with-100-products.sql:ro
+      - ./01-starter-files/db-scripts/countries-and-states.sql:/docker-entrypoint-initdb.d/02-countries-and-states.sql:ro
+      - ./01-starter-files/db-scripts/create-order-tables.sql:/docker-entrypoint-initdb.d/03-create-order-tables.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-p${MYSQL_ROOT_PASSWORD:-rootpassword}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  backend:
+    build:
+      context: ./02-backend/spring-boot-ecommerce
+    container_name: ecommerce-backend
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE:-full-stack-ecommerce}?useSSL=false&useUnicode=yes&characterEncoding=UTF-8&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER:-ecommerceapp}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD:-ecommerceapp}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:4200}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-replace-with-your-anthropic-api-key}
+      OKTA_OAUTH2_ISSUER: ${OKTA_OAUTH2_ISSUER:-https://your-auth0-domain/}
+      OKTA_OAUTH2_CLIENT_ID: ${OKTA_OAUTH2_CLIENT_ID:-your-auth0-client-id}
+      OKTA_OAUTH2_AUDIENCE: ${OKTA_OAUTH2_AUDIENCE:-http://localhost:8080}
+    ports:
+      - "8080:8080"
+
+volumes:
+  mysql_data:

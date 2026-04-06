@@ -13,13 +13,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin("http://localhost:4200")
 @RestController
 @RequestMapping("/api/chat")
 public class ChatController {
 
-    @Value("${anthropic.api.key}")
-    private String anthropicApiKey;
+    private final AnthropicClient client;
 
     private static final String SYSTEM_PROMPT =
         "You are a helpful shopping assistant for an electronics e-commerce store. " +
@@ -28,11 +26,14 @@ public class ChatController {
         "compare items, and guide their purchase decisions. " +
         "Keep responses concise and friendly.";
 
-    @PostMapping
-    public ChatResponse chat(@RequestBody ChatRequest request) {
-        AnthropicClient client = AnthropicOkHttpClient.builder()
+    public ChatController(@Value("${anthropic.api.key}") String anthropicApiKey) {
+        this.client = AnthropicOkHttpClient.builder()
                 .apiKey(anthropicApiKey)
                 .build();
+    }
+
+    @PostMapping
+    public ChatResponse chat(@RequestBody ChatRequest request) {
 
         List<MessageParam> messageParams = request.getMessages().stream()
                 .map(msg -> {
@@ -51,13 +52,16 @@ public class ChatController {
                 .toList();
 
         MessageCreateParams params = MessageCreateParams.builder()
-                .model(Model.CLAUDE_OPUS_4_6)
+                .model(Model.CLAUDE_HAIKU_4_5)
                 .maxTokens(1024L)
                 .system(SYSTEM_PROMPT)
                 .messages(messageParams)
                 .build();
 
+        long start = System.currentTimeMillis();
         Message response = client.messages().create(params);
+        long elapsed = System.currentTimeMillis() - start;
+        System.out.printf("Anthropic API response time: %d ms%n", elapsed);
 
         String replyText = response.content().stream()
                 .flatMap(block -> block.text().stream())

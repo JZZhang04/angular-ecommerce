@@ -12,7 +12,13 @@ export class CartService {
   totalPrice: Subject<number> = new BehaviorSubject<number>(0);
   totalQuantity: Subject<number> = new BehaviorSubject<number>(0);
 
-  constructor() { }
+  constructor() {
+    const savedCart = localStorage.getItem('cartItems');
+    if (savedCart) {
+      this.cartItems = JSON.parse(savedCart);
+      this.computeCartTotals();
+    }
+  }
 
   addToCart(theCartItem: CartItem) {
 
@@ -56,6 +62,9 @@ export class CartService {
     // publish the new values ... all subscribers will receive the new data
     this.totalPrice.next(totalPriceValue);
     this.totalQuantity.next(totalQuantityValue);
+
+    // persist cart to localStorage
+    localStorage.setItem('cartItems', JSON.stringify(this.cartItems));
 
     // log cart data just for debugging purposes
     this.logCartData(totalPriceValue, totalQuantityValue);
