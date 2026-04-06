@@ -1,0 +1,4 @@
+[build]
+  base = "03-frontend/angular-ecommerce"
+  command = "npm run build"
+  publish = "dist/angular-ecommerce"
