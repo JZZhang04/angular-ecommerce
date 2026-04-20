@@ -6,6 +6,7 @@ import com.jzzhang.ecommerce.dto.PurchaseResponse;
 import com.jzzhang.ecommerce.entity.Customer;
 import com.jzzhang.ecommerce.entity.Order;
 import com.jzzhang.ecommerce.entity.OrderItem;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
@@ -15,10 +16,12 @@ import java.util.UUID;
 @Service
 public class CheckoutServiceImpl implements CheckoutService {
 
-    private CustomerRepository customerRepository;
+    private final CustomerRepository customerRepository;
+    private final MeterRegistry meterRegistry;
 
-    public CheckoutServiceImpl(CustomerRepository customerRepository) {
+    public CheckoutServiceImpl(CustomerRepository customerRepository, MeterRegistry meterRegistry) {
         this.customerRepository = customerRepository;
+        this.meterRegistry = meterRegistry;
     }
 
     @Override
@@ -46,6 +49,8 @@ public class CheckoutServiceImpl implements CheckoutService {
 
         // save to the database
         customerRepository.save(customer);
+
+        meterRegistry.counter("orders.placed").increment();
 
         // return a response
         return new PurchaseResponse(orderTrackingNumber);

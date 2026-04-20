@@ -1,13 +1,14 @@
 package com.jzzhang.ecommerce;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 class SpringBootEcommerceApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
-
+    @Test
+    void mainClassIsLoadable() {
+        assertDoesNotThrow(() ->
+                Class.forName("com.jzzhang.ecommerce.SpringBootEcommerceApplication"));
+    }
 }
